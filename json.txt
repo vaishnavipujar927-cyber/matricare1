@@ -1,0 +1,6 @@
+{
+  "BP": "Blood Pressure",
+  "Sugar": "Blood Sugar",
+  "HB": "Hemoglobin",
+  "report_summary": "Your report shows the following values:"
+}
