@@ -1,0 +1,47 @@
+let currentLang = 'en';
+let langData = {};
+
+// Load language JSON
+async function loadLang(lang) {
+  const res = await fetch(data/lang-${lang}.json);
+  langData = await res.json();
+}
+
+document.getElementById('language').addEventListener('change', async (e) => {
+  currentLang = e.target.value;
+  await loadLang(currentLang);
+});
+
+window.onload = async () => {
+  await loadLang(currentLang);
+};
+
+// Analyze Report
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  const file = document.getElementById('reportFile').files[0];
+  if (!file) return alert('Please select a report file.');
+
+  document.getElementById('result').innerText = 'Processing...';
+
+  Tesseract.recognize(file, 'eng', { logger: m => console.log(m) })
+    .then(({ data: { text } }) => {
+      const output = generateReportSummary(text);
+      document.getElementById('result').innerText = output;
+    });
+});
+
+// Generate descriptive summary (simplified logic)
+function generateReportSummary(text) {
+  let summary = langData.report_summary + '\n\n';
+  if (/BP/i.test(text)) summary += ${langData.BP}: ${extractValue(text, 'BP')}\n;
+  if (/Sugar/i.test(text)) summary += ${langData.Sugar}: ${extractValue(text, 'Sugar')}\n;
+  if (/HB|Hemoglobin/i.test(text)) summary += ${langData.HB}: ${extractValue(text, 'HB')}\n;
+  return summary;
+}
+
+// Dummy value extraction (can improve)
+function extractValue(text, field) {
+  const regex = new RegExp(${field}[:\\s]*([0-9/.]+), 'i');
+  const match = text.match(regex);
+  return match ? match[1] : 'N/A';
+}
